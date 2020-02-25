@@ -4,24 +4,15 @@ const app = express();
 const PORT = 1337;
 let  counter = 0;
 
-app.use((req, res, next) => {
-    req.on('connect', () => {
-        counter++;
-    })
-    res.on('finish', () => {
-        counter--;
-    })
-    next()
-});
-
 counterMiddleware = function(req,res, next) {
-    if (counter > 5) {
+    if (counter === 5) {
         res.send({error: "Too many requests"}).status(500).end();
     }
     next();
 }
 
 app.get("/recipe/:ingredient", counterMiddleware ,(req,res,next)=> {
+    counter++;
     const appUrl = "https://recipes-goodness.herokuapp.com/recipes/";
     try {
       axios.get(`${appUrl}${req.params.ingredient}`)
